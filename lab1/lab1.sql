@@ -443,11 +443,12 @@ SELECT * FROM jbitemCustomView;
 
 /* 
 Question 16:
+*/
 
-A table is static: jbitemCustom won't be modified if we modify jbitem.
-A view is dynamic: for example, if we modify jbitem, then jbitemView
+/*
+A table is static: jbitemCustomTable won't be modified if we modify jbitem.
+A view is dynamic: for example, if we modify jbitem, then jbitemCustomView
 will be modified.
-
 */
 
 /* 
@@ -500,9 +501,9 @@ SELECT * FROM debitCost2;
 */
 
 /* 
-
-    EXPLIQUER PQ INNER JOIN 
-
+    We are using an INNER JOIN. In our case, we want the intersection of 
+jbsale and jbitem regarding one condition.
+    LEFT JOIN or RIGHT JOIN would have given differents result (NULL tuples)
 */
 
 /*
@@ -545,12 +546,10 @@ SELECT * FROM jbsupplier;
 /* b. */
 
 /*
-
     In order to be able to delete a supplier in jbsupplier, it is necessary to
 also delete all the depedencies it has (foreign key contraint).
 This can be done by specifying "ON DELETE CASCADE" while declaring the
-constraint or by modifying it (as what we have done).
-
+constraint or by modifying it afterwards
 */
 
 /*
