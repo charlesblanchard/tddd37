@@ -328,28 +328,26 @@ WHERE color='black';
 Question 13:
 */
 
-SELECT S.supplier as id, SUM(S.quan*P.weight) as totalWeight
-FROM jbsupply S RIGHT JOIN jbparts P ON S.part=P.id
-WHERE S.supplier IN
+SELECT Su.name, SUM(S.quan*P.weight) as totalWeight
+FROM jbsupplier as Su 
+	JOIN jbsupply as S ON Su.id=S.supplier
+	JOIN jbparts as P ON P.id=S.part
+WHERE Su.city IN
 (
 	SELECT id
-	FROM jbsupplier
-	WHERE city IN 
-	(
-		SELECT id
-		FROM jbcity
-		WHERE state='Mass'
-	)	
+	FROM jbcity
+	WHERE state='Mass'
 )
 GROUP BY S.supplier;
 
+
 /*
-+-----+-------------+
-| id  | totalWeight |
-+-----+-------------+
-|  89 |     1135000 |
-| 475 |        3120 |
-+-----+-------------+
++--------------+-------------+
+| name         | totalWeight |
++--------------+-------------+
+| Fisher-Price |     1135000 |
+| DEC          |        3120 |
++--------------+-------------+
 */
 
 /*
@@ -512,6 +510,34 @@ Question 19:
 
 /* a. */
 
+DELETE FROM jbsale where item IN
+(
+SELECT id
+FROM jbitem
+WHERE supplier IN
+(
+SELECT id
+	FROM jbsupplier
+	WHERE city IN
+	(
+		SELECT id
+		FROM jbcity
+		WHERE name='Los Angeles'
+	)
+));
+
+DELETE FROM jbitem where supplier IN
+(
+	SELECT id
+	FROM jbsupplier
+	WHERE city IN
+	(
+		SELECT id
+		FROM jbcity
+		WHERE name='Los Angeles'
+	)
+);
+
 DELETE FROM jbsupplier WHERE city IN
 (
 SELECT id
@@ -555,38 +581,23 @@ constraint or by modifying it afterwards
 /*
 Question 20:
 */
-CREATE VIEW tempo(supplier_name, item_name, item_id) AS
-	SELECT jbsupplier.name, jbitem.name, jbitem.id
-	FROM jbsupplier LEFT JOIN jbitem ON jbsupplier.id = jbitem.supplier;
 
 CREATE VIEW jbsale_supply(supplier, item, quantity) AS
-	SELECT tempo.supplier_name, tempo.item_name, jbsale.quantity
-	FROM tempo LEFT JOIN jbsale ON jbsale.item = tempo.item_id;
+SELECT jbsupplier.name, jbitem.name, jbsale.quantity
+FROM jbsupplier JOIN jbitem ON jbsupplier.id=jbitem.supplier LEFT JOIN jbsale ON jbsale.item=jbitem.id;
 
-SELECT supplier, sum(quantity) AS nb_sales
-FROM jbsale_supply
+SELECT supplier, SUM(quantity) AS sum FROM jbsale_supply
 GROUP BY supplier;
 
 /*
-+--------------+----------+
-| supplier     | nb_sales |
-+--------------+----------+
-| A E Neumann  |     NULL |
-| Amdahl       |     NULL |
-| Cannon       |        6 |
-| Data General |     NULL |
-| DEC          |     NULL |
-| Edger        |     NULL |
-| Fisher-Price |     NULL |
-| IBM          |     NULL |
-| Levi-Strauss |        1 |
-| Playskool    |        2 |
-| Spooley      |     NULL |
-| White Paper  |     NULL |
-| White Stag   |        4 |
-| Whitman's    |        2 |
-| Wormley      |     NULL |
-+--------------+----------+
++--------------+------+
+| supplier     | sum  |
++--------------+------+
+| Cannon       |    6 |
+| Fisher-Price | NULL |
+| Levi-Strauss |    1 |
+| Playskool    |    2 |
+| White Stag   |    4 |
+| Whitman's    |    2 |
++--------------+------+
 */
-
-
