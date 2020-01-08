@@ -56,10 +56,10 @@ CREATE TABLE Flight
 
 CREATE TABLE Reservation
 (
-	reservationNumber INT,
+	reservationNumber INT AUTO_INCREMENT,
 	flight INT,
     nbPassenger INT,
-    contact INT,
+    contact INT DEFAULT NULL,
     CONSTRAINT pk_reservation PRIMARY KEY(reservationNumber)
 ) ENGINE=InnoDB;
 
@@ -98,12 +98,16 @@ CREATE TABLE TicketList
 CREATE TABLE Passenger
 (
 	passportNumber INT,
-	reservationNumber INT,
-    lastName VARCHAR(30),
-    firstName VARCHAR(30),
+    name VARCHAR(30),
     CONSTRAINT pk_passenger_passport PRIMARY KEY(passportNumber)
 ) ENGINE=InnoDB;
 
+CREATE TABLE PotentialBoarding
+(
+	reservationNumber INT,
+	passportNumber INT
+) ENGINE=InnoDB;
+	
 
 SELECT "Foreign key creation" as "Message";
 
@@ -128,9 +132,12 @@ ALTER TABLE Booking ADD CONSTRAINT fk_booking_bookingNumber FOREIGN KEY (booking
 ALTER TABLE Booking ADD CONSTRAINT fk_booking_creditCard FOREIGN KEY (creditCard) REFERENCES CreditCard(cardNumber);
 
 
-ALTER TABLE TicketList ADD CONSTRAINT fk_ticketlist_passportNumber FOREIGN KEY (passportNumber) REFERENCES Passenger(passportNumber);
-ALTER TABLE TicketList ADD CONSTRAINT fk_ticketlist_reservationNumber FOREIGN KEY (reservationNumber) REFERENCES Reservation(reservationNumber);
 
-ALTER TABLE Passenger ADD CONSTRAINT fk_passenger_reservation FOREIGN KEY (reservationNumber) REFERENCES Reservation(reservationNumber);
+ALTER TABLE TicketList ADD CONSTRAINT fk_ticketlist_passportNumber FOREIGN KEY (passportNumber) REFERENCES Passenger(passportNumber);
+ALTER TABLE TicketList ADD CONSTRAINT fk_ticketlist_reservationNumber FOREIGN KEY (reservationNumber) REFERENCES Booking(bookingNumber);
+
 
 ALTER TABLE Contact ADD CONSTRAINT fk_contact_passportNumber FOREIGN KEY (passportNumber) REFERENCES Passenger(passportNumber);
+
+ALTER TABLE PotentialBoarding ADD CONSTRAINT fk_potentialboarding_reservation FOREIGN KEY (reservationNumber) REFERENCES Reservation(reservationNumber);
+ALTER TABLE PotentialBoarding ADD CONSTRAINT fk_potentialboarding_passport FOREIGN KEY (passportNumber) REFERENCES Passenger(passportNumber);
